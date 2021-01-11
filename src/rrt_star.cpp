@@ -4,19 +4,19 @@
 bool intersLineLine(Point s1_p0, Point s1_pf, Point s2_p0, Point s2_pf){
 
     bool isInters;
-    double t, u, det;
+    float t, u, det;
 
     // Minimum and maximum coordinates of sector s1
-    double s1_min_x = fmin(s1_p0.x, s1_pf.x);
-    double s1_max_x = fmax(s1_p0.x, s1_pf.x);
-    double s1_min_y = fmin(s1_p0.y, s1_pf.y);
-    double s1_max_y = fmax(s1_p0.y, s1_pf.y);
+    float s1_min_x = fmin(s1_p0.x, s1_pf.x);
+    float s1_max_x = fmax(s1_p0.x, s1_pf.x);
+    float s1_min_y = fmin(s1_p0.y, s1_pf.y);
+    float s1_max_y = fmax(s1_p0.y, s1_pf.y);
 
     // Minimum and maximum coordinates of sector s2
-    double s2_min_x = fmin(s2_p0.x, s2_pf.x);
-    double s2_max_x = fmax(s2_p0.x, s2_pf.x);
-    double s2_min_y = fmin(s2_p0.y, s2_pf.y);
-    double s2_max_y = fmax(s2_p0.y, s2_pf.y);
+    float s2_min_x = fmin(s2_p0.x, s2_pf.x);
+    float s2_max_x = fmax(s2_p0.x, s2_pf.x);
+    float s2_min_y = fmin(s2_p0.y, s2_pf.y);
+    float s2_max_y = fmax(s2_p0.y, s2_pf.y);
 
     // Segments s_i, s_j do not intersect if the maximum of s_i is smaller than the minimum of s_j
     if (s1_max_x < s2_min_x || s2_max_x < s1_min_x || s1_max_y < s2_min_y || s2_max_y < s1_min_y){
@@ -45,7 +45,7 @@ bool intersLineLine(Point s1_p0, Point s1_pf, Point s2_p0, Point s2_pf){
 }
 
 // Check if a segment s is obstructed by any obstacles contained within obs.
-bool isObstacleFree(vector<Point> s, vector<Polygon> obs){
+bool isObstacleFree(std::vector<Point> s, std::vector<Polygon> obs){
     // Loop for the different obstacles
     for ( unsigned int i = 0; i < obs.size(); i++ ){
         Polygon pol_i = obs[i];
@@ -63,13 +63,13 @@ bool isObstacleFree(vector<Point> s, vector<Polygon> obs){
 }
 
 // This function forces the new random point to stay at a minimum 0.5*d and maximum d distance from its nearest neighbor
-void limitDistance(const Point p0, Point &pf, const double d_lim){
+void limitDistance(const Point p0, Point &pf, const float d_lim){
     if ( hypot( pf.x - p0.x, pf.y - p0.y ) > d_lim ){
-        const double th = atan2( pf.y - p0.y, pf.x - p0.x );
+        const float th = atan2( pf.y - p0.y, pf.x - p0.x );
         pf.x = p0.x + d_lim*cos(th);
         pf.y = p0.y + d_lim*sin(th);
     } else if ( hypot( pf.x - p0.x, pf.y - p0.y ) < 0.9*d_lim ){
-        const double th = atan2( pf.y - p0.y, pf.x - p0.x );
+        const float th = atan2( pf.y - p0.y, pf.x - p0.x );
         pf.x = p0.x + d_lim/2.0*cos(th);
         pf.y = p0.y + d_lim/2.0*sin(th);
     }
@@ -93,9 +93,9 @@ Plan fetchPlan(Graph graph, Node p0, Node pf){
 
 // Function to check whether a point p is contained within any of the obstacles in the obs vector of obstacles.
 // See: https://www.geeksforgeeks.org/how-to-check-if-a-given-point-lies-inside-a-polygon/
-bool isInsidePolygon(Point p, vector<Polygon> obs){
+bool isInsidePolygon(Point p, std::vector<Polygon> obs){
     // Draw a horizontal line from the point to infinity
-    Point p_inf{DBL_MAX, p.y};
+    Point p_inf{FLT_MAX, p.y};
     // Loop for the different obstacles
     for ( unsigned int i = 0; i < obs.size(); i++ ){
         Polygon pol_i = obs[i];
@@ -116,11 +116,11 @@ bool isInsidePolygon(Point p, vector<Polygon> obs){
 
 // Function to find the nearest neighbor of a given point p, among a list of candidate nodes cand.
 unsigned int nearestNeighbor(Point p, Graph cand){
-    double d_nn = DBL_MAX;
+    float d_nn = FLT_MAX;
     unsigned int i_nn = UINT_MAX;
     for ( unsigned int i = 0; i < cand.size(); i++ ){
         // Compute Euclidean distance
-        double d_i = hypot( cand[i].p.x - p.x, cand[i].p.y - p.y );
+        float d_i = hypot( cand[i].p.x - p.x, cand[i].p.y - p.y );
         if ( d_i < d_nn ){
             d_nn = d_i;
             i_nn = i;
@@ -130,23 +130,23 @@ unsigned int nearestNeighbor(Point p, Graph cand){
 }
 
 // Function to find a suitable parent for a given point p, among a list of candidate nodes cand.
-unsigned int bestNeighbor(Point p, Graph cand, double b, vector<Polygon> obs){
-    double d_nn = DBL_MAX;
+unsigned int bestNeighbor(Point p, Graph cand, float b, std::vector<Polygon> obs){
+    float d_nn = FLT_MAX;
     unsigned int i_nn = UINT_MAX;
     for ( unsigned int i = 0; i < cand.size(); i++ ){
-        double d_ij = hypot( cand[i].p.x - p.x, cand[i].p.y - p.y );
+        float d_ij = hypot( cand[i].p.x - p.x, cand[i].p.y - p.y );
         // Dismiss candidate if it is not within the ball of radius b.
         if ( d_ij > b ){ continue; }
 
         // Create a segment to check whether rewiring would interfer with an obstacle
-        vector<Point> s;
+        std::vector<Point> s;
         s.push_back(p);
         s.push_back(cand[i].p);
         // Discard the candidate to best neighbor straight away if the segment finds an obstacle.
         if ( isObstacleFree(s, obs) == false ){ continue; }
         
         // Not only the distance is considered, but the whole cost from the root node.
-        double d_i = cand[i].cost + d_ij;
+        float d_i = cand[i].cost + d_ij;
         if ( d_i < d_nn ){
             d_nn = d_i;
             i_nn = i;
@@ -159,22 +159,22 @@ unsigned int bestNeighbor(Point p, Graph cand, double b, vector<Polygon> obs){
 // NOTE: neighbors can only be rewired to the new node.
 // This is because existing neighbors are assumed to have been optimally attached already.
 // So just check whether the new member can improve that.
-void rewire(Graph &cand, const double b, const vector<Polygon> obs){
+void rewire(Graph &cand, const float b, const std::vector<Polygon> obs){
     Node n_new = cand.back();
     for ( unsigned int i = 0; i < cand.size()-1; i++ ){
-        double d_ij = hypot( cand[i].p.x - n_new.p.x, cand[i].p.y - n_new.p.y );
+        float d_ij = hypot( cand[i].p.x - n_new.p.x, cand[i].p.y - n_new.p.y );
         // Dismiss candidate if it is not within the ball of radius b.
         if ( d_ij > b ){ continue; }
         
         // Create a segment to check whether rewiring would interfer with an obstacle
-        vector<Point> s;
+        std::vector<Point> s;
         s.push_back(cand[i].p);
         s.push_back(n_new.p);
         // Discard the rewiring straight away if the segment finds an obstacle.
         if ( isObstacleFree(s, obs) == false ){ continue; }
 
         // Compute whether changing parent reduces cost.
-        double d_i = n_new.cost + d_ij;
+        float d_i = n_new.cost + d_ij;
         if ( d_i < cand[i].cost ){
             cand[i].cost = d_i;
             cand[i].parent = cand.size()-1;
@@ -184,21 +184,21 @@ void rewire(Graph &cand, const double b, const vector<Polygon> obs){
 
 // Generate a random point in the range [(x0, y0), (xN, yN)].
 // See: https://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
-Point rnd_point(const double x0, const double xN, const double y0, const double yN){
+Point rnd_point(const float x0, const float xN, const float y0, const float yN){
     // Will be used to obtain a seed for the random number engine
-    random_device rd;
+    std::random_device rd;
     // Standard mersenne_twister_engine seeded with rd()
-    mt19937 gen(rd());
+    std::mt19937 gen(rd());
     // Use unif_x and unif_y to transform the random unsigned int generated by gen into a 
-    // double in [x0, xN), [y0, yN), respectively.
-    uniform_real_distribution<double> unif_x(x0, xN), unif_y(y0, yN);
-    // Each call to unif_x(gen) or unif_y(gen) generates a new random double.
+    // float in [x0, xN), [y0, yN), respectively.
+    std::uniform_real_distribution<float> unif_x(x0, xN), unif_y(y0, yN);
+    // Each call to unif_x(gen) or unif_y(gen) generates a new random float.
     return Point{unif_x(gen), unif_y(gen)};
 }
 
 // Perform RRT* within a rectangular arena defined by arena, limiting the iterations to maxIt.
 // Threshold distance d_lim, RRT* ball radius b, starting point p0, goal pf, set of obstacles obs.
-Graph RRTstar(const Point p0, const Point pf, const Polygon borders, const vector<Polygon> obs, const unsigned int maxIt, const double tol, const double d_lim, const double b){
+Graph RRTstar(const Point p0, const Point pf, const Polygon borders, const std::vector<Polygon> obs, const unsigned int maxIt, const float tol, const float d_lim, const float b){
 
     // Initialize the graph with the root node, corresponding to point p0.
     Graph graph;
@@ -206,26 +206,26 @@ Graph RRTstar(const Point p0, const Point pf, const Polygon borders, const vecto
     unsigned int it = 0;
 
     // Assume the arena has the shape of a rectangle
-    const double x0 = borders[0].x;
-    const double y0 = borders[0].y;
-    const double xN = borders[1].x;
-    const double yN = borders[2].y;
+    const float x0 = borders[0].x;
+    const float y0 = borders[0].y;
+    const float xN = borders[1].x;
+    const float yN = borders[2].y;
 
     // Initialize like this, to check whether a one-shot direct path p0-pf exists.
     Point potential_node = p0;
-    double potential_cost = 0.0;
+    float potential_cost = 0.0;
     unsigned int ind_potential_parent;
 
     // Start finding random points and connecting them to the graph.
     while ( it < maxIt ){
         it += 1;
         // Create a test segment from the child to the goal
-        vector<Point> s_to_goal;
+        std::vector<Point> s_to_goal;
         s_to_goal.push_back(potential_node);
         s_to_goal.push_back(pf);
 /*         // If the goal can be already reached, do it and stop searching for further nodes.
         if ( isObstacleFree(s_to_goal, obs) == true ){
-            double final_cost = potential_cost + hypot( potential_node.x - pf.x, potential_node.y - pf.y );
+            float final_cost = potential_cost + hypot( potential_node.x - pf.x, potential_node.y - pf.y );
             ind_potential_parent = graph.size()-1;
             graph.push_back(Node{pf, ind_potential_parent, final_cost});
             break;
@@ -247,7 +247,7 @@ Graph RRTstar(const Point p0, const Point pf, const Polygon borders, const vecto
         // Again, discard the point straight away if it lies inside an obstacle.
         //if ( isInsidePolygon(potential_node, obs) ){ continue; }
         // Create a segment from the parent to the child
-        vector<Point> s;
+        std::vector<Point> s;
         s.push_back(graph[ind_potential_parent].p);
         s.push_back(potential_node);
         // Discard the point straight away if the segment finds an obstacle.
@@ -258,21 +258,19 @@ Graph RRTstar(const Point p0, const Point pf, const Polygon borders, const vecto
         // EXCLUSIVE to RRT*: once the new child has been added, try to rewire among neighbors.
         rewire(graph, b, obs);
     }
-    cout << "RRT* number of iterations: " << it << endl;
+    std::cout << "RRT* number of iterations: " << it << std::endl;
     return graph;
 }
 
-// Write an RRT* plan in a csv file
+// Write a RRT* plan in a csv file
 void write_plan(Plan opt_plan){
-    ofstream csv_file;
+    std::ofstream csv_file;
     csv_file.open("rrt_star.csv");
-    csv_file << "x" << "," << "y" << endl;
-
+    csv_file << "x" << "," << "y" << std::endl;
     // Loop over the RRT* points within the input array
     for (unsigned int n=0; n<opt_plan.size(); n++){
-
         Point p = opt_plan[n];
-        csv_file << p.x << "," << p.y << endl;
+        csv_file << p.x << "," << p.y << std::endl;
     }
     csv_file.close();
 }

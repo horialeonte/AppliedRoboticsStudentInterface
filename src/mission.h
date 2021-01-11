@@ -1,18 +1,24 @@
 #include "clipper.hpp"
 #include "rrt_star.h"
 
-using namespace std;
+struct RRTS_params{
+    unsigned int maxIt;  // Limit of iterations
+    float tol;           // Tolerance to goal center point
+    float d_lim;         // Maximum allowed distance at which a new candidate shall be from any existing node
+    float b;             // RRT* ball radius to rewire
+};
 
-Polygon loadArena();
+struct Dubins_params{
+    float Kmax;          // Maximum curvature
+    unsigned int k;      // Variable to set the number of angles to be considered at each point (minimum should be 4 for refinement to work)
+    unsigned int M;      // Variable to choose the number of refinement steps
+};
 
-vector<Polygon> loadObstacles();
+// TODO: comment next line out
+typedef std::vector<Pose> Path;
 
-vector<pair<int,Polygon>> loadVictims();
-
-Polygon loadGate();
-
-vector<Polygon> inflate(vector<Polygon> obs, double R);
+std::vector<Polygon> inflate(std::vector<Polygon> obs, float R);
 
 Point centroid(const Polygon pol);
 
-int main();
+Path mission1(const struct RRTS_params RRTS_params, const struct Dubins_params Dubins_params, const Polygon& borders, const std::vector<Polygon>& obstacle_list, const std::vector<std::pair<int,Polygon>>& victim_list, const Polygon& gate, const float x, const float y, const float theta);
