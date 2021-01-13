@@ -1,4 +1,4 @@
-#include "rrt_star.h"
+#include "rrt_star.hpp"
 
 // Function to check if a segment s1, defined by s1_p0 initial and s1_pf final points; intersects a segment s2, defined by s2_p0 initial and s2_pf final points.
 bool intersLineLine(Point s1_p0, Point s1_pf, Point s2_p0, Point s2_pf){
@@ -203,7 +203,17 @@ Graph RRTstar(const Point p0, const Point pf, const Polygon borders, const std::
     // Initialize the graph with the root node, corresponding to point p0.
     Graph graph;
     graph.push_back(Node{p0, UINT_MAX, 0.0});
-    unsigned int it = 0;
+
+    // Create a test segment from the start to the goal
+    std::vector<Point> start_to_goal;
+    start_to_goal.push_back(p0);
+    start_to_goal.push_back(pf);
+    // If the goal can be already reached, do it and stop searching for further nodes.
+    if ( isObstacleFree(start_to_goal, obs) == true ){
+        std::cout << "RRT* not necessary. Segment is obstacle free!" << std::endl;
+        graph.push_back(Node{pf, 0, hypot( p0.x - pf.x, p0.y - pf.y )});
+        return graph;
+    }
 
     // Assume the arena has the shape of a rectangle
     const float x0 = borders[0].x;
@@ -217,55 +227,39 @@ Graph RRTstar(const Point p0, const Point pf, const Polygon borders, const std::
     unsigned int ind_potential_parent;
 
     // Start finding random points and connecting them to the graph.
+    unsigned int it = 0;
     while ( it < maxIt ){
         it += 1;
-        // Create a test segment from the child to the goal
-        std::vector<Point> s_to_goal;
-        s_to_goal.push_back(potential_node);
-        s_to_goal.push_back(pf);
-/*         // If the goal can be already reached, do it and stop searching for further nodes.
-        if ( isObstacleFree(s_to_goal, obs) == true ){
-            float final_cost = potential_cost + hypot( potential_node.x - pf.x, potential_node.y - pf.y );
-            ind_potential_parent = graph.size()-1;
-            graph.push_back(Node{pf, ind_potential_parent, final_cost});
-            break;
-        } */
-        // If the goal is already reached, stop searching for further nodes.
-        if ( hypot( pf.x - graph.back().p.x, pf.y - graph.back().p.y ) < tol ){
-            break;
-        }
         potential_node = rnd_point(x0, xN, y0, yN);
-        //potential_node = limitDistance(graph[graph.size()-1].p, potential_node, d_lim);
-        // Discard the point straight away if it lies inside an obstacle.
-        //if ( isInsidePolygon(potential_node, obs) ){ continue; }
         ind_potential_parent = nearestNeighbor(potential_node, graph);
         // Recompute the candidate node so as to keep it within the limit connection distance.
         limitDistance(graph[ind_potential_parent].p, potential_node, d_lim);
-        // EXCLUSIVE to RRT*: choose best parent among those contained in a ball of radius b around the random child.
+        // EXCLUSIVE to RRT*: choose best parent among those contained in a ball of radius b around the generated child.
         unsigned int temp_ind_potential_parent = bestNeighbor(potential_node, graph, b, obs);
         if ( temp_ind_potential_parent != UINT_MAX ){ ind_potential_parent = temp_ind_potential_parent; }
-        // Again, discard the point straight away if it lies inside an obstacle.
-        //if ( isInsidePolygon(potential_node, obs) ){ continue; }
         // Create a segment from the parent to the child
         std::vector<Point> s;
         s.push_back(graph[ind_potential_parent].p);
         s.push_back(potential_node);
-        // Discard the point straight away if the segment finds an obstacle.
+        // Discard the point straight away if the segment finds an obstacle, whether the generated child is inside an obstacle or outside.
         if ( isObstacleFree(s, obs) == false ){ continue; }
         // Otherwise, add it to the graph.
         potential_cost = graph[ind_potential_parent].cost + hypot( graph[ind_potential_parent].p.x - potential_node.x, graph[ind_potential_parent].p.y - potential_node.y );
         graph.push_back(Node{potential_node, ind_potential_parent, potential_cost});
         // EXCLUSIVE to RRT*: once the new child has been added, try to rewire among neighbors.
         rewire(graph, b, obs);
+        // If the goal is already reached, stop searching for further nodes.
+        if ( hypot( pf.x - graph.back().p.x, pf.y - graph.back().p.y ) < tol ){ break; }
     }
-    std::cout << "RRT* number of iterations: " << it << std::endl;
+    std::cout << "RRT* necessary. Number of iterations: " << it << std::endl;
     return graph;
 }
 
 // Write a RRT* plan in a csv file
-void write_plan(Plan opt_plan){
+void write_plan(Plan opt_plan, std::string filename){
     std::ofstream csv_file;
-    csv_file.open("rrt_star.csv");
+    //csv_file.open("rrt_star.csv");
+    csv_file.open(filename);
     csv_file << "x" << "," << "y" << std::endl;
     // Loop over the RRT* points within the input array
     for (unsigned int n=0; n<opt_plan.size(); n++){

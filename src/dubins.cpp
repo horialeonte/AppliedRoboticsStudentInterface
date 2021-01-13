@@ -1,4 +1,4 @@
-#include "dubins.h"
+#include "dubins.hpp"
 
 // Auxiliary function to wrap any angle within the interval [0, 2*pi)
 float mod2pi(float angle){ return angle - (2.0 * M_PI) * floor( angle / (2.0 * M_PI) ); }
@@ -393,9 +393,9 @@ std::vector<Pose> refinementMarkovDubins(std::vector<Pose> all_confs, const floa
     return opt_path;
 }
 
-void write_path(std::vector<Pose> opt_path){
+void write_path(std::vector<Pose> opt_path, std::string filename){
     std::ofstream csv_file;
-    csv_file.open("dubins.csv");
+    csv_file.open(filename);
     csv_file << "x" << "," << "y" << std::endl;
 
     // Loop over the poses within the input array
