@@ -9,10 +9,10 @@
 #include <vector>         // Vectors
 
 // TODO: comment next 4 lines out
-struct Point{
+/* struct Point{
     float x;        // Generic 2D point - x
     float y;        // Generic 2D point - y
-};
+}; */
 
 struct Node{
     Point p;
@@ -23,7 +23,7 @@ struct Node{
 typedef std::vector<Point> Plan;
 
 // TODO: comment next line out
-typedef std::vector<Point> Polygon;
+//typedef std::vector<Point> Polygon;
 
 typedef std::vector<Node> Graph;
 

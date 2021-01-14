@@ -208,10 +208,10 @@ Graph RRTstar(const Point p0, const Point pf, const Polygon borders, const std::
     std::vector<Point> start_to_goal;
     start_to_goal.push_back(p0);
     start_to_goal.push_back(pf);
-    // If the goal can be already reached, do it and stop searching for further nodes.
+    // If the goal can be already reached, do it and avoid searching for further nodes.
     if ( isObstacleFree(start_to_goal, obs) == true ){
-        std::cout << "RRT* not necessary. Segment is obstacle free!" << std::endl;
-        graph.push_back(Node{pf, 0, hypot( p0.x - pf.x, p0.y - pf.y )});
+        graph.push_back(Node{pf, 0, float(hypot( p0.x - pf.x, p0.y - pf.y ))});
+        std::cout << "RRT* converged. The graph has a total of " << graph.size() << " nodes. Straight path to goal was already obstacle free!" << std::endl;
         return graph;
     }
 
@@ -251,7 +251,8 @@ Graph RRTstar(const Point p0, const Point pf, const Polygon borders, const std::
         // If the goal is already reached, stop searching for further nodes.
         if ( hypot( pf.x - graph.back().p.x, pf.y - graph.back().p.y ) < tol ){ break; }
     }
-    std::cout << "RRT* necessary. Number of iterations: " << it << std::endl;
+    if (it == maxIt){ throw std::runtime_error("RRT* could not converge in the specified number of iterations."); }
+    std::cout << "RRT* converged. The graph has a total of " << graph.size() << " nodes. Number of iterations has been " << it << "." << std::endl;
     return graph;
 }
 
