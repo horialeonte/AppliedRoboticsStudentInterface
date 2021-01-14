@@ -15,28 +15,19 @@
 
 #include <iostream>
 
-//#include "mission.hpp"
+#include "mission.hpp"
 #include "robot_finder.h"
 #include "obstacle_detection.h"
 #include "victim_gate_detection.h"
 
-//#include "dubins.hpp"
-#include "mission.h"
-//#include "rrt_star.hpp"
-//#include "clipper.hpp"
-
 
 namespace student {
-
-
 
  void loadImage(cv::Mat& img_out, const std::string& config_folder){  
    throw std::logic_error( "STUDENT FUNCTION - LOAD IMAGE - NOT IMPLEMENTED" );
  }
 
  void genericImageListener(const cv::Mat& img_in, std::string topic, const std::string& config_folder){
-    //throw std::logic_error( "STUDENT FUNCTION - IMAGE LISTENER - NOT CORRECTLY IMPLEMENTED" );
-    
     
     static size_t id = 0;
   	static bool init = false;
@@ -148,7 +139,7 @@ namespace student {
   //UNTIL HERE 
 
   bool extrinsicCalib(const cv::Mat& img_in, std::vector<cv::Point3f> object_points, const cv::Mat& camera_matrix, cv::Mat& rvec, cv::Mat& tvec, const std::string& config_folder){
-    //throw std::logic_error( "STUDENT FUNCTION - EXTRINSIC CALIB - NOT IMPLEMENTED" ); 
+
     std::string file_path = config_folder + "/extrinsicCalib.csv";
 
     std::vector<cv::Point2f> image_points;
@@ -220,8 +211,7 @@ namespace student {
     //cv::imshow("win1", img_out);
     //std::cout << "undistortion done";
     //int key = cv::waitKey(0);
-
-    //throw std::logic_error( "STUDENT FUNCTION - IMAGE UNDISTORT - NOT IMPLEMENTED" );  
+ 
     //cv::undistort(img_in, img_out, cam_matrix, dist_coeffs, config_folder);
     
     
@@ -248,7 +238,6 @@ namespace student {
                         const cv::Mat& tvec, const std::vector<cv::Point3f>& object_points_plane, 
                         const std::vector<cv::Point2f>& dest_image_points_plane, 
                         cv::Mat& plane_transf, const std::string& config_folder){
-   // throw std::logic_error( "STUDENT FUNCTION - FIND PLANE TRANSFORM - NOT IMPLEMENTED" );  
     
     cv::Mat corner_pixels;
 
