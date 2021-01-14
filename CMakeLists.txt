@@ -30,6 +30,7 @@ add_library(student SHARED
    src/mission.cpp
    src/rrt_star.cpp
    src/clipper.cpp
+   src/border_detection.cpp
 
    ## src/image_saver.cpp
    ## src/image_undistort.cpp

@@ -1,5 +1,5 @@
-#include "rrt_star.hpp"
-
+//#include "rrt_star.hpp"
+#include "rrt_star.h"
 // Function to check if a segment s1, defined by s1_p0 initial and s1_pf final points; intersects a segment s2, defined by s2_p0 initial and s2_pf final points.
 bool intersLineLine(Point s1_p0, Point s1_pf, Point s2_p0, Point s2_pf){
 

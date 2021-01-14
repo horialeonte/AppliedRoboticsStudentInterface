@@ -1,4 +1,4 @@
-#include "dubins.hpp"
+#include "dubins.h"
 
 // Auxiliary function to wrap any angle within the interval [0, 2*pi)
 float mod2pi(float angle){ return angle - (2.0 * M_PI) * floor( angle / (2.0 * M_PI) ); }

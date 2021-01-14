@@ -5,7 +5,8 @@
 // Once the current goal is reached, the next numbered victim or the gate is set as the new goal.
 // Keep going until the gate is reached, when the mission is considered successful.
 
-#include "mission.hpp"
+//#include "mission.hpp"
+#include "mission.h"
 
 // Custom function to sort a vector of pairs by their first element in ascending order.
 // See: https://www.geeksforgeeks.org/sorting-vector-of-pairs-in-c-set-1-sort-by-first-and-second/

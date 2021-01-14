@@ -15,19 +15,28 @@
 
 #include <iostream>
 
-#include "mission.hpp"
+//#include "mission.hpp"
 #include "robot_finder.h"
 #include "obstacle_detection.h"
 #include "victim_gate_detection.h"
+#include "border_detection.h"
+
+//#include "dubins.hpp"
+#include "mission.h"
+//#include "rrt_star.hpp"
+//#include "clipper.hpp"
 
 
 namespace student {
+
+
 
  void loadImage(cv::Mat& img_out, const std::string& config_folder){  
    throw std::logic_error( "STUDENT FUNCTION - LOAD IMAGE - NOT IMPLEMENTED" );
  }
 
  void genericImageListener(const cv::Mat& img_in, std::string topic, const std::string& config_folder){
+    //throw std::logic_error( "STUDENT FUNCTION - IMAGE LISTENER - NOT CORRECTLY IMPLEMENTED" );
     
     static size_t id = 0;
   	static bool init = false;
@@ -81,7 +90,6 @@ namespace student {
 				break;
     }
     
-
     //namedWindow("Win1", WINDOW_AUTOSIZE);
     //imshow( "Win1", image);
     //waitKey(0); 
@@ -139,7 +147,7 @@ namespace student {
   //UNTIL HERE 
 
   bool extrinsicCalib(const cv::Mat& img_in, std::vector<cv::Point3f> object_points, const cv::Mat& camera_matrix, cv::Mat& rvec, cv::Mat& tvec, const std::string& config_folder){
-
+    //throw std::logic_error( "STUDENT FUNCTION - EXTRINSIC CALIB - NOT IMPLEMENTED" ); 
     std::string file_path = config_folder + "/extrinsicCalib.csv";
 
     std::vector<cv::Point2f> image_points;
@@ -206,12 +214,13 @@ namespace student {
   void imageUndistort(const cv::Mat& img_in, cv::Mat& img_out, 
           const cv::Mat& cam_matrix, const cv::Mat& dist_coeffs, const std::string& config_folder){
     
-    //THIS IS THE FIRST METHOD, BUT THE UNDISTPRTION IS NOT SO VISIBLE
+    //THIS IS THE FIRST METHOD
     //cv::undistort(img_in, img_out, cam_matrix, dist_coeffs);
     //cv::imshow("win1", img_out);
     //std::cout << "undistortion done";
     //int key = cv::waitKey(0);
- 
+
+    //throw std::logic_error( "STUDENT FUNCTION - IMAGE UNDISTORT - NOT IMPLEMENTED" );  
     //cv::undistort(img_in, img_out, cam_matrix, dist_coeffs, config_folder);
     
     
@@ -220,17 +229,12 @@ namespace student {
     static cv::Mat mapx, mapy;
 
     if(!maps_done){
-
       cv::Mat R;
       cv::initUndistortRectifyMap(cam_matrix, dist_coeffs, R, cam_matrix, img_in.size(), CV_16SC2, mapx, mapy);
-
       maps_done = true;
     }
-
     cv::remap(img_in, img_out, mapx, mapy, cv::INTER_LINEAR);
-
-
-    std::cout << "image undistortion done" <<std::endl;
+    //std::cout << "image undistortion done" <<std::endl;
     
   }
 
@@ -238,6 +242,7 @@ namespace student {
                         const cv::Mat& tvec, const std::vector<cv::Point3f>& object_points_plane, 
                         const std::vector<cv::Point2f>& dest_image_points_plane, 
                         cv::Mat& plane_transf, const std::string& config_folder){
+   // throw std::logic_error( "STUDENT FUNCTION - FIND PLANE TRANSFORM - NOT IMPLEMENTED" );  
     
     cv::Mat corner_pixels;
 
@@ -256,76 +261,65 @@ void unwarp(const cv::Mat& img_in, cv::Mat& img_out, const cv::Mat& transf,
     cv::warpPerspective(img_in, img_out, transf, img_in.size());  
     //imshow("win1", img_out);
     //int key = cv::waitKey(0);
-    std::cout << "image unwarp done" <<std::endl;
+    //std::cout << "image unwarp done" <<std::endl;
   }
 
   bool processMap(const cv::Mat& img_in, const double scale, std::vector<Polygon>& obstacle_list, std::vector<std::pair<int,Polygon>>& victim_list, Polygon& gate, const std::string& config_folder){
     
     //-----------------------------------VARIABLES ----------------------------------------------//
-    
-    cv::Mat hsv_img, border_mask;
-    std::vector<std::vector<cv::Point>> border_contours;
-    std::vector<cv::Point>  approx_border;
-      
-    //----------------------------------IMAGE2HSV----------------------------------------//
+    cv::Mat hsv_img;
+    //-----------------------------------IMAGE2HSV-----------------------------------------------//
     cv::cvtColor(img_in, hsv_img, cv::COLOR_BGR2HSV);
-  
-    //-----------------------------------OBSTACLES-------------------------------------------------//
+    //-----------------------------------OBSTACLES-----------------------------------------------//
     bool ok_obs = obstacle_detection(hsv_img, scale, obstacle_list);
-
-    //-----------------------------------VICTIMS-AND-GATE------------------------------------------------//
+    //-----------------------------------VICTIMS-AND-GATE----------------------------------------//
     bool ok_vict = victim_gate_detection(img_in, scale, victim_list, gate);
-    
-    /*
-    //------------------------------------------------------------------------------------------------
-    std::cout<<"===================================BORDERS===================================" << std::endl;
-    //Setting the black mask 
-    cv::inRange(hsv_img, cv::Scalar(0,0,0), cv::Scalar(180, 255, 30), border_mask);
-
-    //Filtering
-    cv::Mat kernel_b = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5,5), cv::Point(1,-1));
-    cv::erode(border_mask,border_mask, kernel_b);
-    cv::dilate(border_mask,border_mask, kernel_b);
-
-    //cv::imshow("border", border_mask);
-    //int kk = cv::waitKey(0);
-
-    //FIND countours
-    cv::findContours(border_mask, border_contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-    //cv::drawContours(hsv_img, border_contours, -1, cv::Scalar(140,190,40), 4, cv::LINE_AA);
-    //cv::imshow("border", hsv_img);
-    //int kk = cv::waitKey(0);
-
-    for(int i=0;i<border_contours.size();++i){
-      
-      if(cv::contourArea(border_contours[i]) > 3000){
-
-        cv::approxPolyDP(border_contours[i], approx_border, 5, true);
-        std::cout << approx_border.size() << std::endl << approx_border << std::endl << "---------------------" <<std::endl;
-        //we scale each obstacle and put it in the obstacle list vector
-        Polygon border;
-        for(const auto& point:approx_border){
-          border.emplace_back(point.x/scale, point.y/scale);
-        }
-        //obstacle_list.push_back(obstacle);
-
-      }
-  
-      
-    } */
+    //-----------------------------------BORDERDS------------------------------------------------//
+    //bool ok_border = border_detection(hsv_img, scale, obstacle_list);
 
     std::cout<<"Process Map ran" << std::endl;
 
-    return true;
+    return ok_obs && ok_vict;
   }
 
   bool findRobot(const cv::Mat& img_in, const double scale, Polygon& triangle, double& x, double& y, double& theta, const std::string& config_folder){
-
+    //we call the function in robot_finder.cpp
     return robot_finder(img_in, scale, triangle, x,  y, theta);
     std::cout << scale << std::endl;
   }
+/*
 
-  bool planPath(const Polygon& borders, const std::vector<Polygon>& obstacle_list, const std::vector<std::pair<int,Polygon>>& victim_list, const Polygon& gate, const float x, const float y, const float theta, Path& path, const std::string& config_folder){ 
+  // Compute the centroid of a polygon. See: https://bell0bytes.eu/centroid-convex/
+  Point centroid(const Polygon pol){
+    float centroidX = 0, centroidY = 0;
+    float det = 0, tempDet = 0;
+    unsigned int j = 0;
+    unsigned int nVertices = (unsigned int)pol.size();
+
+    for (unsigned int i = 0; i < nVertices; i++){
+
+      // closed polygon - last vertex connects with the first one
+      if ( i + 1 == nVertices ){ j = 0; }
+      else { j = i + 1; }
+
+      // compute the determinant
+      tempDet = pol[i].x * pol[j].y - pol[j].x*pol[i].y;
+      det += tempDet;
+
+      centroidX += (pol[i].x + pol[j].x)*tempDet;
+      centroidY += (pol[i].y + pol[j].y)*tempDet;
+    }
+
+    // divide by the total mass of the polygon
+    centroidX /= 3*det;
+    centroidY /= 3*det;
+
+    return Point{centroidX, centroidY};
+  }*/
+
+  
+
+  bool planPath(const Polygon& borders, const std::vector<Polygon>& obstacle_list, const std::vector<std::pair<int,Polygon>>& victim_list, const Polygon& gate, const float x, const float y, const float theta, Path& path, const std::string& config_folder){
     
     std::cout << "Plan path started" << std::endl;
     
@@ -352,13 +346,22 @@ void unwarp(const cv::Mat& img_in, cv::Mat& img_out, const cv::Mat& transf,
     const float zz = 10.00;
 
     // Choose mission. Valid missions are 1 and 2.
-    const int mission = 2;
+    const int mission = 1;
 
     // The path is returned.
     path = missionPlanner(RRTS_pars, Dubins_pars, borders, obstacle_list, victim_list, gate, x, y, theta, R, v, zz, mission);
     return true;
 
-  }  
+
+    return true;
+
+
   
+  }  
+
+
+  
+
+
 }
 
