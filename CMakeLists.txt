@@ -10,15 +10,36 @@ find_package(project_interface REQUIRED )
 ## Specify additional locations of header files
 include_directories(
  include 
+ inc
  ${OpenCV_INCLUDE_DIRS}
  ${project_interface_INCLUDE_DIRS}
+)
+
+## Add executable
+add_executable(calibrate
+   src/camera_calibration.cpp
 )
 
 ## CREATE EXECUTABLE LIBRARY
 add_library(student SHARED
    src/student_interface.cpp
+   src/robot_finder.cpp
+   src/obstacle_detection.cpp
+   src/victim_gate_detection.cpp
+   src/dubins.cpp
+   src/mission.cpp
+   src/rrt_star.cpp
+   src/clipper.cpp
+
+   ## src/image_saver.cpp
+   ## src/image_undistort.cpp
+
 )
 
 target_link_libraries(student
   ${OpenCV_LIBRARIES}  
+)
+
+target_link_libraries(calibrate
+  ${OpenCV_LIBRARIES}
 )
