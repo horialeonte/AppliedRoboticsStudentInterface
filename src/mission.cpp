@@ -5,8 +5,7 @@
 // Once the current goal is reached, the next numbered victim or the gate is set as the new goal.
 // Keep going until the gate is reached, when the mission is considered successful.
 
-//#include "mission.hpp"
-#include "mission.h"
+#include "mission.hpp"
 
 // Custom function to sort a vector of pairs by their first element in ascending order.
 // See: https://www.geeksforgeeks.org/sorting-vector-of-pairs-in-c-set-1-sort-by-first-and-second/
@@ -105,8 +104,10 @@ Path mission1(const struct RRTS_params& RRTS_params, const struct Dubins_params&
         std::vector<Polygon> mission_obs = obstacle_list;
         Point current_goal;
 
+        if (currGoal < numGoals){ current_goal = centroid(mission_vts[currGoal-1].second); }
+        else if (currGoal == numGoals){ current_goal = centroid(gate); }
         // As long as the next goal is not the gate, add the gate as obstacle.
-        if ( currGoal < numGoals ){
+/*         if ( currGoal < numGoals ){
             mission_obs.push_back(gate);
             // Choose current goal as the next victim ordered by number. Add the remaining victims as obstacles.
             for ( size_t i = 0; i < mission_vts.size(); i++ ){
@@ -116,7 +117,7 @@ Path mission1(const struct RRTS_params& RRTS_params, const struct Dubins_params&
         // If last goal, then goal is the gate and no further victims are to be added as obstacles.
         } else if ( currGoal == numGoals ){
             current_goal = centroid(gate);
-        }
+        } */
 
         // Inflate obstacles, including non immediate victims, by a distance equal to the robot radius.
         mission_obs = inflate(mission_obs, R);
