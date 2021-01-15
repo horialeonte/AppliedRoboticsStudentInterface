@@ -12,8 +12,9 @@ include_directories(
  inc
  ${OpenCV_INCLUDE_DIRS}
  ${project_interface_INCLUDE_DIRS}
- ## GLPK library
- /usr/local/include
+ ## GLPK library - path to glpk.h, wherever that is placed in your computer.
+ #/usr/local/include
+ /usr/include
 )
 
 ## Add executable
@@ -32,8 +33,9 @@ add_library(student SHARED
    src/rrt_star.cpp
    src/clipper.cpp
    src/border_detection.cpp
-   ## GLPK library
-   /usr/local/lib/libglpk.a
+   ## GLPK library - path to libglpk.a, wherever that is placed in your computer.
+   #/usr/local/lib/libglpk.a
+   /usr/lib/x86_64-linux-gnu/libglpk.a
 )
 
 target_link_libraries(student
