@@ -39,6 +39,7 @@ add_library(student SHARED
 
 target_link_libraries(student
   ${OpenCV_LIBRARIES}
+  glpk
 )
 
 target_link_libraries(calibrate
