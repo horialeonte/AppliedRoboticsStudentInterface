@@ -5,6 +5,7 @@ Package used by student to complete the assignment of the course.
 Horia Andrei Leonte - Perception and image processing
 
 Alexandre Justo Miro - Mission planning and path planning
+
 alexandre.justomiro@studenti.unitn.it
 
 # Dependencies - 1) CMake - 2) OpenCV - 3) Catkin - 4) etc.
