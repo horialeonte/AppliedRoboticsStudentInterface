@@ -3,9 +3,6 @@
 #include "rrt_star.h"
 #include <algorithm>   // Vector sorting
 #include <glpk.h>      // GNU Linear Programming Kit
-// See: https://en.wikibooks.org/wiki/GLPK/Obtaining_GLPK
-// See: https://en.wikibooks.org/wiki/GLPK/Linux_OS
-// Find latest version here: http://ftp.gnu.org/gnu/glpk/
 
 struct RRTS_params{
     unsigned int maxIt;  // Limit of iterations
@@ -25,11 +22,6 @@ struct MissionPlanningNode{
     std::vector<float> distances;
     float reward;
 };
-
-// TODO: comment next 3 lines out
-/* struct Path{
-    std::vector<Pose> points;
-}; */
 
 bool sortPair(const std::pair<int,Polygon>& v1, const std::pair<int,Polygon>& v2);
 
