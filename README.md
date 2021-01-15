@@ -1,5 +1,5 @@
 # Laboratory of Applied Robotics Student Interface
-Package used by student to complete the assignment of the course.
+Package used by student to complete the assignment of the course. This package is dependent on the simulator package, which can be retrieved from [...]
 
 # Authors
 Horia Andrei Leonte - Perception and image processing
