@@ -15,16 +15,11 @@
 
 #include <iostream>
 
-//#include "mission.hpp"
 #include "robot_finder.h"
 #include "obstacle_detection.h"
 #include "victim_gate_detection.h"
 #include "border_detection.h"
-
-//#include "dubins.hpp"
 #include "mission.h"
-//#include "rrt_star.hpp"
-//#include "clipper.hpp"
 
 
 namespace student {
