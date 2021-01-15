@@ -9,6 +9,7 @@ find_package(project_interface REQUIRED )
 
 ## Specify additional locations of header files
 include_directories(
+ /usr/local/include
  include 
  inc
  ${OpenCV_INCLUDE_DIRS}
@@ -32,13 +33,19 @@ add_library(student SHARED
    src/clipper.cpp
    src/border_detection.cpp
 
+   /usr/local/lib/libglpk.a
+
    ## src/image_saver.cpp
    ## src/image_undistort.cpp
-
 )
 
+#add_library(glpk SHARED
+#   /usr/local/lib/libglpk.a
+#)
+
 target_link_libraries(student
-  ${OpenCV_LIBRARIES}  
+  ${OpenCV_LIBRARIES} 
+  glpk
 )
 
 target_link_libraries(calibrate
