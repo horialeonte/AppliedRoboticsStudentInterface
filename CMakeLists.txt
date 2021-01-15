@@ -9,11 +9,12 @@ find_package(project_interface REQUIRED )
 
 ## Specify additional locations of header files
 include_directories(
- /usr/local/include
  include 
  inc
  ${OpenCV_INCLUDE_DIRS}
  ${project_interface_INCLUDE_DIRS}
+ ## GLPK library
+ /usr/local/include
 )
 
 ## Add executable
