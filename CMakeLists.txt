@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(student_proect)
+project(student_project)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
@@ -9,7 +9,6 @@ find_package(project_interface REQUIRED )
 
 ## Specify additional locations of header files
 include_directories(
- include 
  inc
  ${OpenCV_INCLUDE_DIRS}
  ${project_interface_INCLUDE_DIRS}
