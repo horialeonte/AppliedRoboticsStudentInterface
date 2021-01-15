@@ -24,14 +24,11 @@
 
 namespace student {
 
-
-
  void loadImage(cv::Mat& img_out, const std::string& config_folder){  
    throw std::logic_error( "STUDENT FUNCTION - LOAD IMAGE - NOT IMPLEMENTED" );
  }
 
  void genericImageListener(const cv::Mat& img_in, std::string topic, const std::string& config_folder){
-    //throw std::logic_error( "STUDENT FUNCTION - IMAGE LISTENER - NOT CORRECTLY IMPLEMENTED" );
     
     static size_t id = 0;
   	static bool init = false;
@@ -142,7 +139,7 @@ namespace student {
   //UNTIL HERE 
 
   bool extrinsicCalib(const cv::Mat& img_in, std::vector<cv::Point3f> object_points, const cv::Mat& camera_matrix, cv::Mat& rvec, cv::Mat& tvec, const std::string& config_folder){
-    //throw std::logic_error( "STUDENT FUNCTION - EXTRINSIC CALIB - NOT IMPLEMENTED" ); 
+
     std::string file_path = config_folder + "/extrinsicCalib.csv";
 
     std::vector<cv::Point2f> image_points;
@@ -201,8 +198,7 @@ namespace student {
     std::cout << "extrinsic calib done" << std::endl;
     std::cout << "rvec is" << std::endl << rvec << "tvec is" <<std::endl << tvec << std::endl;
 
-    return ok; 
-    
+    return ok;
 
   }
 
@@ -214,10 +210,7 @@ namespace student {
     //cv::imshow("win1", img_out);
     //std::cout << "undistortion done";
     //int key = cv::waitKey(0);
-
-    //throw std::logic_error( "STUDENT FUNCTION - IMAGE UNDISTORT - NOT IMPLEMENTED" );  
     //cv::undistort(img_in, img_out, cam_matrix, dist_coeffs, config_folder);
-    
     
     //THIS IS THE SECOND METHOD
     static bool maps_done = false;
@@ -237,7 +230,6 @@ namespace student {
                         const cv::Mat& tvec, const std::vector<cv::Point3f>& object_points_plane, 
                         const std::vector<cv::Point2f>& dest_image_points_plane, 
                         cv::Mat& plane_transf, const std::string& config_folder){
-   // throw std::logic_error( "STUDENT FUNCTION - FIND PLANE TRANSFORM - NOT IMPLEMENTED" );  
     
     cv::Mat corner_pixels;
 
@@ -282,37 +274,6 @@ void unwarp(const cv::Mat& img_in, cv::Mat& img_out, const cv::Mat& transf,
     return robot_finder(img_in, scale, triangle, x,  y, theta);
     std::cout << scale << std::endl;
   }
-/*
-
-  // Compute the centroid of a polygon. See: https://bell0bytes.eu/centroid-convex/
-  Point centroid(const Polygon pol){
-    float centroidX = 0, centroidY = 0;
-    float det = 0, tempDet = 0;
-    unsigned int j = 0;
-    unsigned int nVertices = (unsigned int)pol.size();
-
-    for (unsigned int i = 0; i < nVertices; i++){
-
-      // closed polygon - last vertex connects with the first one
-      if ( i + 1 == nVertices ){ j = 0; }
-      else { j = i + 1; }
-
-      // compute the determinant
-      tempDet = pol[i].x * pol[j].y - pol[j].x*pol[i].y;
-      det += tempDet;
-
-      centroidX += (pol[i].x + pol[j].x)*tempDet;
-      centroidY += (pol[i].y + pol[j].y)*tempDet;
-    }
-
-    // divide by the total mass of the polygon
-    centroidX /= 3*det;
-    centroidY /= 3*det;
-
-    return Point{centroidX, centroidY};
-  }*/
-
-  
 
   bool planPath(const Polygon& borders, const std::vector<Polygon>& obstacle_list, const std::vector<std::pair<int,Polygon>>& victim_list, const Polygon& gate, const float x, const float y, const float theta, Path& path, const std::string& config_folder){
     
@@ -347,16 +308,6 @@ void unwarp(const cv::Mat& img_in, cv::Mat& img_out, const cv::Mat& transf,
     path = missionPlanner(RRTS_pars, Dubins_pars, borders, obstacle_list, victim_list, gate, x, y, theta, R, v, zz, mission);
     return true;
 
-
-    return true;
-
-
-  
   }  
 
-
-  
-
-
 }
-
