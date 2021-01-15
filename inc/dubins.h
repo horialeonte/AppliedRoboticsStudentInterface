@@ -6,9 +6,6 @@
 #include <limits.h>       // Infinity
 #include <math.h>         // Math operations
 #include <sys/time.h>     // Execution time
-// TODO: uncomment next line
-//#include "utils.hpp"
-//#include <vector>         // Vectors
 
 // Structure defining a generic transformation of two points to standard coordinates.
 struct confStandard{
@@ -28,16 +25,6 @@ struct dubinsPrimitive{
     int k3;         // Curvature sign for third sector (L --> +1, S --> 0, R --> -1)
     bool ok;        // Indicates whether it has been mathematically possible to compute the CSC primitive
 };
-
-// Structure defining a generic configuration in 2D, with curvilinear abscissa s, x and y coordinates, orientation angle and curvature.
-// TODO: comment next 7 lines out
-/* struct Pose{
-    float s;        // Generic 2D point - curvilinear abscissa
-    float x;        // Generic 2D point - x
-    float y;        // Generic 2D point - y
-    float theta;    // Generic 2D point - orientation
-    float kappa;    // Generic 2D point - curvature
-}; */
 
 // Structure defining a Dubins 2D arc, with starting point, curvature, length, and final point.
 struct dubinsArc{
