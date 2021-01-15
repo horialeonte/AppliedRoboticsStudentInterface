@@ -32,20 +32,12 @@ add_library(student SHARED
    src/rrt_star.cpp
    src/clipper.cpp
    src/border_detection.cpp
-
+   ## GLPK library
    /usr/local/lib/libglpk.a
-
-   ## src/image_saver.cpp
-   ## src/image_undistort.cpp
 )
 
-#add_library(glpk SHARED
-#   /usr/local/lib/libglpk.a
-#)
-
 target_link_libraries(student
-  ${OpenCV_LIBRARIES} 
-  glpk
+  ${OpenCV_LIBRARIES}
 )
 
 target_link_libraries(calibrate
